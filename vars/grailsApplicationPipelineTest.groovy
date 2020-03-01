@@ -36,9 +36,10 @@ def call(body) {
             stage('Publish') {
                 steps {
                     sh './gradlew prepareBuild'
-                    def dockerRepo = gradleProperties('dockerRepo')
-                    def projectName = gradleSettings('rootProject.name').replace("'", "").trim().toLowerCase()
                     script {
+                        def dockerRepo = gradleProperties('dockerRepo')
+                        def projectName = gradleSettings('rootProject.name').replace("'", "").trim().toLowerCase()
+
                         docker.withRegistry('http://'+ dockerRepo, 'repoPusher-credentials') {
                             def customImage = docker.build("$projectName",  "./build/docker")
                             // tag step
