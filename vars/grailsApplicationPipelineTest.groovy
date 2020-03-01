@@ -36,10 +36,11 @@ def call(body) {
             stage('Publish') {
                 steps {
                     sh './gradlew prepareBuild'
-                    when { expression { gitUtils('IsBRiCRepository') }}
+                    def dockerRepo = gradleProperties('dockerRepo')
+                    def projectName = gradleSettings('rootProject.name').replace("'", "").trim().toLowerCase()
                     script {
-                        docker.withRegistry($nexusURL, 'repoPusher-credentials') {
-                            def customImage = docker.build("jenkins-test",  "./build/docker")
+                        docker.withRegistry('http://'+ dockerRepo, 'repoPusher-credentials') {
+                            def customImage = docker.build("$projectName",  "./build/docker")
                             // tag step
                             customImage.push()
                         }
