@@ -13,12 +13,11 @@ def call(body) {
                 steps {
                     echoEnvironment()
                     updateAppVersion()
-                    sh './gradlew refresh-dependencies'
+                    sh './gradlew clean --refresh-dependencies'
                 }
             }
             stage('Build') {
                 steps {
-                    echo "${NEXUS_REPO}"
                     sh './gradlew clean build -x test'
                 }
             }
