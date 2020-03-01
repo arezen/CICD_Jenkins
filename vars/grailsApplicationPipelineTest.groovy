@@ -36,13 +36,16 @@ def call(body) {
                 steps {
                     sh './gradlew prepareBuild'
                     script {
+
                         def dockerRepo = gradleProperties('dockerRepo')
+                        def appVersion  = gradleProperties('appVersion')
                         def projectName = gradleSettings('rootProject.name').replace("'", "").trim().toLowerCase()
 
                         docker.withRegistry('http://'+ dockerRepo, 'repoPusher-credentials') {
-                            def customImage = docker.build("$projectName",  "./build/docker")
+                            def dockerImage = docker.build("$projectName",  "./build/docker")
                             // tag step
-                            customImage.push()
+                            dockerImage.push(appVersion)
+                            dockerImage.push('latest')
                         }
                     }
                 }
