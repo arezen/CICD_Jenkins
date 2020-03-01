@@ -46,7 +46,7 @@ def call(body) {
                             def dockerImage = docker.build("$projectName", "./build/docker")
                             // tag step
                             dockerImage.push(appVersion)
-                            dockerImage.push(latestVersion)
+                           // dockerImage.push(latestVersion)
                         }
                     }
                 }
