@@ -39,14 +39,14 @@ def call(body) {
 
                         def dockerRepo = 'http://' + gradleProperties('dockerRepo')
                         def appVersion = gradleProperties('appVersion')
-                        def latestVersion = gradleProperties('baseVersion') + ':latest'
+                        def latestVersion = gradleProperties('baseVersion') + '.latest'
                         def projectName = gradleSettings('rootProject.name').replace("'", "").trim().toLowerCase()
 
                         docker.withRegistry(dockerRepo, 'repoPusher-credentials') {
                             def dockerImage = docker.build("$projectName", "./build/docker")
                             // tag step
                             dockerImage.push(appVersion)
-                           // dockerImage.push(latestVersion)
+                            dockerImage.push(latestVersion)
                         }
                     }
                 }
