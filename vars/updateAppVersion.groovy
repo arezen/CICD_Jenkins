@@ -11,33 +11,35 @@ def call() {
 
         case 'master':
             properties.baseVersion = "master".toString()
-            properties.bricVersion = "${properties.baseVersion}.${env.BUILD_NUMBER}".toString()
-            properties.bricDependencyVersion = "${properties.baseVersion}.+".toString()
+            properties.appVersion = "${properties.baseVersion}.${env.BUILD_NUMBER}".toString()
+            properties.appDependencyVersion = "${properties.baseVersion}.+".toString()
+            properties.dockerRepo = "nexus.argoden.com:5001".toString()
+            properties.mavenRepo = "nexus.argoden.com:82".toString()
             break
 
         case 'dev':
             properties.baseVersion = "dev".toString()
-            properties.bricVersion = "${properties.baseVersion}.${env.BUILD_NUMBER}".toString()
-            properties.bricDependencyVersion = "${properties.baseVersion}.+".toString()
+            properties.appVersion = "${properties.baseVersion}.${env.BUILD_NUMBER}".toString()
+            properties.appDependencyVersion = "${properties.baseVersion}.+".toString()
+            properties.dockerRepo = "nexus.argoden.com:5002".toString()
+            properties.mavenRepo = "nexus.argoden.com:82".toString()
             break
 
         default:
             if (env.CHANGE_ID){
-
-                if (!"$env.JOB_NAME".contains("Niop")) { // Do not change bricDependencyVersion for Niop Repositories
-                    properties.baseVersion = "dev".toString()
-                    properties.bricDependencyVersion = "${properties.baseVersion}.+".toString()
-                }
-
                 properties.baseVersion = "pr.${env.CHANGE_ID}".toString()
-                properties.bricVersion = "${properties.baseVersion}.${env.BUILD_NUMBER}".toString()
+                properties.appVersion = "${properties.baseVersion}.${env.BUILD_NUMBER}".toString()
+                properties.appDependencyVersion = "${properties.baseVersion}.+".toString()
+                appDependencyVersion
             }
             break
     }
 
     echo "baseVersion = ${properties.baseVersion}"
-    echo "bricVersion = ${properties.bricVersion}"
-    echo "bricDependencyVersion = ${properties.bricDependencyVersion}"
+    echo "appVersion = ${properties.appVersion}"
+    echo "appDependencyVersion = ${properties.appDependencyVersion}"
+    echo "dockerRepo = ${properties.dockerRepo}"
+    echo "mavenRepo = ${properties.mavenRepo}"
 
     properties.store(propertiesFile.newWriter(), "$env.BUILD_TAG")
 }

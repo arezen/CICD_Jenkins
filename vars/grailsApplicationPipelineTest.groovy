@@ -12,6 +12,8 @@ def call(body) {
             stage('Initialize') {
                 steps {
                     echoEnvironment()
+                    updateAppVersion()
+                    sh './gradlew refresh-dependencies'
                 }
             }
             stage('Build') {
@@ -34,6 +36,7 @@ def call(body) {
             stage('Publish') {
                 steps {
                     sh './gradlew prepareBuild'
+                    when { expression { gitUtils('IsBRiCRepository') }}
                     script {
                         docker.withRegistry($nexusURL, 'repoPusher-credentials') {
                             def customImage = docker.build("jenkins-test",  "./build/docker")
