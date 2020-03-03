@@ -30,6 +30,8 @@ def call() {
                 properties.baseVersion = "pr.${env.CHANGE_ID}".toString()
                 properties.appVersion = "${properties.baseVersion}.${env.BUILD_NUMBER}".toString()
                 properties.appDependencyVersion = "${properties.baseVersion}.+".toString()
+                properties.dockerRepo = "nexus.argoden.com:5002".toString()
+                properties.mavenRepo = "nexus.argoden.com:82".toString()
             }
             break
     }
