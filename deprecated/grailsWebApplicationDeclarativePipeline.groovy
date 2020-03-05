@@ -12,17 +12,24 @@ def call(body) {
             stage('Initialize') {
                 steps {
                     echoEnvironment()
-                    updateWebAppVersion()
+                    updateAppVersion()
+                    sh './gradlew clean --refresh-dependencies'
                 }
             }
             stage('Build') {
                 steps {
-                    sh './gradlew build'
+                    sh './gradlew clean build -x test'
                 }
             }
             stage('Test') {
                 steps {
-                    sh './gradlew test'
+                    sh './gradlew test -x cobertura'
+                }
+            }
+            stage('Code Coverage') {
+                steps {
+                    sh './gradlew cobertura'
+                    cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/build/reports/cobertura/coverage.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
                 }
             }
             stage('Publish') {
