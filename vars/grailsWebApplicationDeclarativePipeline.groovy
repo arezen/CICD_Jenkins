@@ -13,10 +13,11 @@ def call(body) {
                 steps {
                     echoEnvironment()
                     updateWebAppVersion()
-                    def username = gradleProperties('argodenUser')
-
-                    sh "echo '------------------'"
-                    sh "echo $username"
+                    script {
+                        def username = gradleProperties('argodenUser')
+                        sh "echo '------------------'"
+                        sh "echo $username"
+                    }
                 }
             }
             stage('Build') {
