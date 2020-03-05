@@ -14,7 +14,9 @@ def call() {
             properties.appVersion = "${properties.baseVersion}.${env.BUILD_NUMBER}".toString()
             properties.appDependencyVersion = "${properties.baseVersion}.+".toString()
             properties.dockerRepo = "nexus.argoden.com:5001".toString()
-            properties.mavenRepo = "nexus.argoden.com:82".toString()
+            properties.mavenRepo = "nexus.argoden.com:8080".toString()
+            properties.argodenUser = "repoPusher"
+            properties.argodenPassword = "vicWrdDpIw5+YSBfBfNkQQ=="
             break
 
         case 'dev':
@@ -22,7 +24,9 @@ def call() {
             properties.appVersion = "${properties.baseVersion}.${env.BUILD_NUMBER}".toString()
             properties.appDependencyVersion = "${properties.baseVersion}.+".toString()
             properties.dockerRepo = "nexus.argoden.com:5002".toString()
-            properties.mavenRepo = "nexus.argoden.com:82".toString()
+            properties.mavenRepo = "nexus.argoden.com:8080".toString()
+            properties.argodenUser = "repoPusher"
+            properties.argodenPassword = "vicWrdDpIw5+YSBfBfNkQQ=="
             break
 
         default:
@@ -31,7 +35,9 @@ def call() {
                 properties.appVersion = "${properties.baseVersion}.${env.BUILD_NUMBER}".toString()
                 properties.appDependencyVersion = "${properties.baseVersion}.+".toString()
                 properties.dockerRepo = "nexus.argoden.com:5002".toString()
-                properties.mavenRepo = "nexus.argoden.com:82".toString()
+                properties.mavenRepo = "nexus.argoden.com:8080".toString()
+                properties.argodenUser = "repoPusher"
+                properties.argodenPassword = "vicWrdDpIw5+YSBfBfNkQQ=="
             }
             break
     }
