@@ -13,7 +13,6 @@ def call(body) {
                 steps {
                     echoEnvironment()
                     updateAppVersion()
-                    sh './gradlew clean --refresh-dependencies'
                 }
             }
             stage('Build') {
@@ -23,13 +22,7 @@ def call(body) {
             }
             stage('Test') {
                 steps {
-                    sh './gradlew test -x cobertura'
-                }
-            }
-            stage('Code Coverage') {
-                steps {
-                    sh './gradlew cobertura'
-                    cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/build/reports/cobertura/coverage.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
+                    sh 'ng test --watch=false'
                 }
             }
             stage('Publish') {
