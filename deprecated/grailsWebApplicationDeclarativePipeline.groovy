@@ -17,7 +17,7 @@ def call(body) {
             }
             stage('Build') {
                 steps {
-                    sh './gradlew clean build -x test'
+                    sh 'ng build --prod'
                 }
             }
             stage('Test') {
