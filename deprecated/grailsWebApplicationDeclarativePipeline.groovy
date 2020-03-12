@@ -32,7 +32,7 @@ def call(body) {
             }
             stage('Publish') {
                 steps {
-                    sh './gradlew prepareBuild'
+                    sh './gradlew buildImage'
                     script {
 
                         def dockerRepo = 'http://' + gradleProperties('dockerRepo')
