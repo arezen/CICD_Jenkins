@@ -20,6 +20,11 @@ def call(body) {
                     sh 'ng build --prod'
                 }
             }
+            stage('Lint') {
+                steps {
+                    sh 'ng lint'
+                }
+            }
             stage('Test') {
                 steps {
                     sh 'ng test --watch=false'
