@@ -17,16 +17,24 @@ def call(body) {
             }
             stage('Build') {
                 steps {
-                    sh './gradlew build'
+                    gradle 'buildAngular'
+                }
+            }
+            stage('Lint') {
+                when { expression { params.lint }}
+                steps {
+                    gradle 'lint'
                 }
             }
             stage('Test') {
                 steps {
-                    sh './gradlew test'
+                    sh 'ng test --watch=false'
                 }
             }
             stage('Publish') {
                 steps {
+                    sh 'echo About to publish'
+/*
                     sh './gradlew prepareBuild'
                     script {
 
@@ -42,6 +50,7 @@ def call(body) {
                             dockerImage.push(latestVersion)
                         }
                     }
+*/
                 }
             }
         }
