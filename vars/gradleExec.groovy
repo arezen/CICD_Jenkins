@@ -28,7 +28,8 @@ def buildAngular(options) {
 }
 
 def testAngular(options) {
-    sh 'ng test --watch=false'
+    options << '--watch=false'
+    shGradle('build', options)
 }
 
 def unitTests(options) {
