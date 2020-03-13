@@ -23,7 +23,6 @@ def build(options) {
 
 def buildAngular(options) {
     options << 'exclude-task test'
-    options << 'exclude-task integrationtest'
     options << 'exclude-task lint'
     shGradle('build', options)
 }

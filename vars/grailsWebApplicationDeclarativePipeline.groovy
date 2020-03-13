@@ -19,13 +19,13 @@ def call(body) {
             }
             stage('Build') {
                 steps {
-                    gradlez 'buildAngular'
+                    gradleExec 'buildAngular'
                 }
             }
             stage('Lint') {
                 when { expression { params.lint }}
                 steps {
-                    gradlez 'lint'
+                    gradleExec 'lint'
                 }
             }
             stage('Test') {
