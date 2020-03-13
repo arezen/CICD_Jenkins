@@ -17,7 +17,7 @@ def call(body) {
             }
             stage('Build') {
                 steps {
-                    gradle 'buildAngular'
+                    gradle('buildAngular')
                 }
             }
             stage('Lint') {
