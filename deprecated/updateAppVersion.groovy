@@ -2,7 +2,7 @@
 
 def call() {
 
-    def propertiesFile = new File("$env.WORKSPACE", 'gradle.properties')
+    def propertiesFile = new File("$env.WORKSPACE", 'gradlez.properties')
 
     def properties = new Properties()
     properties.load(propertiesFile.newDataInputStream())

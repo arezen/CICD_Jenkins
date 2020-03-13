@@ -3,7 +3,7 @@
 def call() {
 
     def properties = new Properties()
-    properties.load(new ByteArrayInputStream(readFile('gradle.properties').bytes))
+    properties.load(new ByteArrayInputStream(readFile('gradlez.properties').bytes))
 
     if (gitUtils('IsTCARepository')) {
 
@@ -59,5 +59,5 @@ def call() {
 
     def byteArrayOutputStream = new ByteArrayOutputStream()
     properties.store(byteArrayOutputStream, "$env.BUILD_TAG")
-    writeFile(file: 'gradle.properties', text: new String(byteArrayOutputStream.toByteArray()))
+    writeFile(file: 'gradlez.properties', text: new String(byteArrayOutputStream.toByteArray()))
 }

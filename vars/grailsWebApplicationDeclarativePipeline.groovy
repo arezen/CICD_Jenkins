@@ -6,6 +6,8 @@ def call(body) {
     body.delegate = params
     body()
 
+    params.lint = params.lint ?: true
+
     pipeline {
         agent any
         stages {
@@ -17,13 +19,13 @@ def call(body) {
             }
             stage('Build') {
                 steps {
-                    gradle('buildAngular')
+                    gradlez 'buildAngular'
                 }
             }
             stage('Lint') {
                 when { expression { params.lint }}
                 steps {
-                    gradle 'lint'
+                    gradlez 'lint'
                 }
             }
             stage('Test') {
