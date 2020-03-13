@@ -2,10 +2,8 @@
 
 def call(def key) {
 
-    def propertiesFile = new File("$env.WORKSPACE", 'gradle.properties')
-
     def properties = new Properties()
-    properties.load(propertiesFile.newDataInputStream())
+    properties.load(new ByteArrayInputStream(readFile('gradle.properties').bytes))
 
     return properties.get(key)
 }

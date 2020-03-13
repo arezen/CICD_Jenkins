@@ -8,11 +8,11 @@ def call(Boolean isSuccess, String committerEmail) {
     switch (gitUtils('BranchName')) {
         case 'master':
         case 'dev':
-            emailAddressList = "$committerEmail,jenkins@argoden.com"
+            emailAddressList = "$committerEmail"
             break
     }
 
-    mail bcc: '', body: "$message ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)", cc: '', from: 'jenkins@argoden.com', replyTo: '', subject: message, to: emailAddressList
+    mail bcc: '', body: "$message ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)", cc: '', from: 'jenkins@bric-tps.info', replyTo: '', subject: message, to: emailAddressList
 }
 
 

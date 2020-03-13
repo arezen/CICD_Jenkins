@@ -12,7 +12,7 @@ def call(body) {
             stage('Initialize') {
                 steps {
                     echoEnvironment()
-                    updateAppVersion()
+                    updateBricVersion()
                     gradle 'refreshDependencies'
                 }
             }
@@ -45,12 +45,14 @@ def call(body) {
                 when { expression { gitUtils('IsBRiCRepository') }}
                 steps {
                     gradle 'publishDocker'
+                    slackPublished(true)
                 }
             }
             stage('Publish Maven') {
                 when { expression { params.publishMaven && gitUtils('IsBRiCRepository') }}
                 steps {
                     gradle 'publishMaven'
+                    slackPublished(true)
                 }
             }
             stage('Clean up') {
@@ -64,6 +66,7 @@ def call(body) {
                 script {
                     if (gitUtils('IsBRiCRepository')) {
                         email(false, gitUtils('CommitEmail'))
+                        slackPublished(false)
                     }
                 }
             }

@@ -6,6 +6,8 @@ def call(body) {
     body.delegate = params
     body()
 
+    params.lint = params.lint ?: true
+
     pipeline {
         agent any
         stages {
@@ -13,33 +15,24 @@ def call(body) {
                 steps {
                     echoEnvironment()
                     updateBricVersion()
-                    gradle 'refreshDependencies'
+                    updateBricAngularVersion()
                 }
             }
             stage('Build') {
                 steps {
-                    gradle 'build'
+                    gradle 'buildAngular'
                 }
             }
-            stage('Unit Tests') {
+            stage('Linting') {
+                when { expression { params.lint }}
                 steps {
-                    gradle 'unitTests'
+                    gradle 'lint'
                 }
             }
-            stage('Code Coverage') {
-                steps {
-                    gradle 'codeCoverage'
-                }
-            }
-            stage('Code Narc') {
-                steps {
-                    gradle 'codeNarc'
-                }
-            }
-            stage('Publish Maven') {
+            stage('Publish') {
                 when { expression { gitUtils('IsBRiCRepository') }}
                 steps {
-                    gradle 'publishMaven'
+                    gradle 'publishDocker'
                     slackPublished(true)
                 }
             }

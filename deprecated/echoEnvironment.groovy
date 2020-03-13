@@ -5,6 +5,7 @@ def call() {
     echo "git BranchName: ${gitUtils('BranchName')}"
     echo "git OriginUrl: ${gitUtils('OriginUrl')}"
     echo "git Email: ${gitUtils('CommitEmail')}"
+    echo "git IsBricRepository: ${gitUtils('IsBRiCRepository')}"
 
     echo "Environment Variables"
     echo "env.BRANCH_NAME: $env.BRANCH_NAME"

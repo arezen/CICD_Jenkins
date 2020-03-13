@@ -1,13 +1,13 @@
 #!/usr/bin/groovy
 import groovy.json.JsonOutput
 
-def call(String CLUSTER, String HELM_NAME, String PIVOTAL_STORIES) {
+def call(String BUILD_NUMBER, String CLUSTER, String HELM_NAME, String PIVOTAL_STORIES) {
+
+    def deploymentLink = slackDeploymentLink "${env.BUILD_NUMBER}", "${CLUSTER}", "${HELM_NAME}"
 
     def blocks = []
 
-    def sb = new StringBuilder()
-    sb.append("<https://jenkins.argoden.com:8443/job/QA/job/Make%20a%20Deployment/${env.BUILD_NUMBER}|${env.BUILD_NUMBER}> Deployment - ")
-    sb.append("<https://${CLUSTER}.argoden.com/${HELM_NAME}|${HELM_NAME}>")
+    def sb = new StringBuilder(deploymentLink)
 
     blocks << [
             type: 'section',

@@ -31,13 +31,23 @@ def buildAngular(options) {
 def unitTests(options) {
     options << 'exclude-task cobertura'
     options << 'exclude-task check'
-    shGradle('test', options)
+
+    try {
+        shGradle('test', options)
+    } finally {
+        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'build/reports/tests', reportFiles: 'index.html', reportName: 'Unit Tests Report', reportTitles: ''])
+    }
 }
 
 def integrationTests(options) {
     options << 'exclude-task cobertura'
     options << 'exclude-task check'
-    shGradle('integrationTest', options)
+
+    try {
+        shGradle('integrationTest', options)
+    } finally {
+        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'build/reports/tests', reportFiles: 'index.html', reportName: 'Integration Tests Report', reportTitles: ''])
+    }
 }
 
 def codeCoverage(options) {
@@ -47,8 +57,11 @@ def codeCoverage(options) {
 }
 
 def codeNarc(options) {
-    shGradle('check', options)
-    publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'build/reports/codenarc', reportFiles: '*.html', reportName: 'Codenarc Report', reportTitles: ''])
+    try {
+        shGradle('check', options)
+    } finally {
+        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'build/reports/codenarc', reportFiles: '*.html', reportName: 'CodeNarc Report', reportTitles: ''])
+    }
 }
 
 def lint(options) {
@@ -59,21 +72,38 @@ def publishMaven(options) {
 
     withCredentials([usernamePassword(credentialsId: 'jenkins-nexus-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASSWORD')]) {
 
-        switch (gitUtils('BranchName')) {
+        if (gitUtils('IsTCARepository')) {
+
+            switch (gitUtils('BranchName')) {
+
+                case 'master':
+                    sh "./gradlew publish ${optionsString(options)} -PnexusRepository=https://nexus.bric-tps.info:8443/repository/tca-maven/ -PnexusUser=$NEXUS_USER -PnexusPassword=$NEXUS_PASSWORD"
+                    break
+
+                default:
+                    if (env.CHANGE_ID)
+                        sh "./gradlew publish ${optionsString(options)} -PnexusRepository=https://nexus.bric-tps.info:8443/repository/bric-maven-dev/ -PnexusUser=$NEXUS_USER -PnexusPassword=$NEXUS_PASSWORD"
+                    break
+            }
+
+        } else {
+
+            switch (gitUtils('BranchName')) {
 
             //case 'master':
-            //    sh "./gradlew publish ${optionsString(options)} -PnexusRepository=https://nexus.argoden.com:8443/repository/bric-maven-release/ -PnexusUser=$NEXUS_USER -PnexusPassword=$NEXUS_PASSWORD"
+            //    sh "./gradlew publish ${optionsString(options)} -PnexusRepository=https://nexus.bric-tps.info:8443/repository/bric-maven-release/ -PnexusUser=$NEXUS_USER -PnexusPassword=$NEXUS_PASSWORD"
             //    break
 
-            case 'master':
-            case 'dev':
-                sh "./gradlew publish ${optionsString(options)} -PnexusRepository=https://nexus.argoden.com:8443/repository/bric-maven-dev/ -PnexusUser=$NEXUS_USER -PnexusPassword=$NEXUS_PASSWORD"
-                break
+                case 'master':
+                case 'dev':
+                    sh "./gradlew publish ${optionsString(options)} -PnexusRepository=https://nexus.bric-tps.info:8443/repository/bric-maven-dev/ -PnexusUser=$NEXUS_USER -PnexusPassword=$NEXUS_PASSWORD"
+                    break
 
-            default:
-                if (env.CHANGE_ID)
-                    sh "./gradlew publish ${optionsString(options)} -PnexusRepository=https://nexus.argoden.com:8443/repository/bric-maven-dev/ -PnexusUser=$NEXUS_USER -PnexusPassword=$NEXUS_PASSWORD"
-                break
+                default:
+                    if (env.CHANGE_ID)
+                        sh "./gradlew publish ${optionsString(options)} -PnexusRepository=https://nexus.bric-tps.info:8443/repository/bric-maven-dev/ -PnexusUser=$NEXUS_USER -PnexusPassword=$NEXUS_PASSWORD"
+                    break
+            }
         }
     }
 }
@@ -83,37 +113,60 @@ def publishDocker(options) {
     def tagWithoutBuildNumber = gradleProperties('baseVersion')
     def tagWithBuildNumber = gradleProperties('bricVersion')
     def projectName = gradleSettings('rootProject.name').replace("'", "").trim().toLowerCase()
-    def buildDir = projectName == 'briccsweb' ? 'build/dist' : 'build/docker'
+    def isWebBuild = projectName == 'briccsweb' || projectName == 'bricextweb'
+    def buildDir = isWebBuild ? 'build/dist' : 'build/docker'
     def baseImageName = "$env.JOB_NAME".contains("Niop") ? 'bric/niop' : 'bric/tps'
 
     shGradle('prepareBuild', ['no-daemon'])
 
     def dockerImage = docker.build("$baseImageName/$projectName", "$buildDir")
 
-    switch (gitUtils('BranchName')) {
+    if (gitUtils('IsTCARepository')) {
 
-        case 'master':
-            docker.withRegistry('https://nexus.argoden.com:5002', 'jenkins-nexus-credentials') {
-                dockerImage.push(tagWithoutBuildNumber)
-                dockerImage.push(tagWithBuildNumber)
-            }
-            break
+        switch (gitUtils('BranchName')) {
 
-        case 'dev':
-            docker.withRegistry('https://nexus.argoden.com:5002', 'jenkins-nexus-credentials') {
-                dockerImage.push()
-                dockerImage.push(tagWithoutBuildNumber)
-                dockerImage.push(tagWithBuildNumber)
-            }
-            break
+            case 'master':
+                docker.withRegistry('https://nexus.bric-tps.info:5003', 'jenkins-nexus-credentials') {
+                    dockerImage.push(tagWithBuildNumber)
+                }
+                break
 
-        default:
-            if (env.CHANGE_ID)
-                docker.withRegistry('https://nexus.argoden.com:5002', 'jenkins-nexus-credentials') {
+            default:
+                if (env.CHANGE_ID)
+                    docker.withRegistry('https://nexus.bric-tps.info:5002', 'jenkins-nexus-credentials') {
+                        dockerImage.push(tagWithoutBuildNumber)
+                        dockerImage.push(tagWithBuildNumber)
+                    }
+                break
+        }
+
+    } else {
+
+        switch (gitUtils('BranchName')) {
+
+            case 'master':
+                docker.withRegistry('https://nexus.bric-tps.info:5002', 'jenkins-nexus-credentials') {
                     dockerImage.push(tagWithoutBuildNumber)
                     dockerImage.push(tagWithBuildNumber)
                 }
-            break
+                break
+
+            case 'dev':
+                docker.withRegistry('https://nexus.bric-tps.info:5002', 'jenkins-nexus-credentials') {
+                    dockerImage.push()
+                    dockerImage.push(tagWithoutBuildNumber)
+                    dockerImage.push(tagWithBuildNumber)
+                }
+                break
+
+            default:
+                if (env.CHANGE_ID)
+                    docker.withRegistry('https://nexus.bric-tps.info:5002', 'jenkins-nexus-credentials') {
+                        dockerImage.push(tagWithoutBuildNumber)
+                        dockerImage.push(tagWithBuildNumber)
+                    }
+                break
+        }
     }
 }
 
