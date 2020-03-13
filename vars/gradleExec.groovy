@@ -27,6 +27,10 @@ def buildAngular(options) {
     shGradle('build', options)
 }
 
+def testAngular(options) {
+    sh 'ng test --watch=false'
+}
+
 def unitTests(options) {
     options << 'exclude-task cobertura'
     options << 'exclude-task check'

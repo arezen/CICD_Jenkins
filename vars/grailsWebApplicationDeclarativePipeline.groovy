@@ -30,7 +30,7 @@ def call(body) {
             }
             stage('Test') {
                 steps {
-                    sh 'ng test --watch=false'
+                    gradleExec 'testAngular'
                 }
             }
             stage('Publish') {
