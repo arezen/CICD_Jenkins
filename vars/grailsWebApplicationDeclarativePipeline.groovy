@@ -36,7 +36,7 @@ def call(body) {
             stage('Publish') {
                 steps {
                     sh 'echo About to publish'
-                    gradleExec 'publishDocker' '--web'
+                    gradleExec 'publishDocker', '--web'
 /*
                     sh './gradlew prepareBuild'
                     script {
