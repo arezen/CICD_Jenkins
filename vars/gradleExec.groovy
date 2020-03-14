@@ -28,8 +28,7 @@ def buildAngular(options) {
 }
 
 def testAngular(options) {
-    options << '--watch=false'
-    shGradle('test', options)
+    shGradle('testOnce', options)
 }
 
 def unitTests(options) {
