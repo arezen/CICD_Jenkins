@@ -86,51 +86,26 @@ def publishMaven(options) {
 
 def publishDocker(options) {
 
-    println "------******------******----"
+    def buildDir = 'build/docker'
 
-    println options
-
-    if (options == '--angular') {
-        println "got --angular flag"
+    if (options.contains('--web')) {
+        buildDir = 'build/dist'
     }
 
-    return
-
-    def tagWithoutBuildNumber = gradleProperties('baseVersion')
-    def tagWithBuildNumber = gradleProperties('bricVersion')
+    def dockerRepo = 'http://' + gradleProperties('dockerRepo')
+    def appVersion = gradleProperties('appVersion')
+    def latestVersion = gradleProperties('baseVersion') + '.latest'
     def projectName = gradleSettings('rootProject.name').replace("'", "").trim().toLowerCase()
-    def buildDir = projectName == 'briccsweb' ? 'build/dist' : 'build/docker'
-    def baseImageName = "$env.JOB_NAME".contains("Niop") ? 'bric/niop' : 'bric/tps'
 
     shGradle('prepareBuild', ['no-daemon'])
 
-    def dockerImage = docker.build("$baseImageName/$projectName", "$buildDir")
-
-    switch (gitUtils('BranchName')) {
-
-        case 'master':
-            docker.withRegistry('https://nexus.argoden.com:5002', 'jenkins-nexus-credentials') {
-                dockerImage.push(tagWithoutBuildNumber)
-                dockerImage.push(tagWithBuildNumber)
-            }
-            break
-
-        case 'dev':
-            docker.withRegistry('https://nexus.argoden.com:5002', 'jenkins-nexus-credentials') {
-                dockerImage.push()
-                dockerImage.push(tagWithoutBuildNumber)
-                dockerImage.push(tagWithBuildNumber)
-            }
-            break
-
-        default:
-            if (env.CHANGE_ID)
-                docker.withRegistry('https://nexus.argoden.com:5002', 'jenkins-nexus-credentials') {
-                    dockerImage.push(tagWithoutBuildNumber)
-                    dockerImage.push(tagWithBuildNumber)
-                }
-            break
+    docker.withRegistry(dockerRepo, 'repoPusher-credentials') {
+        def dockerImage = docker.build("$projectName", "$buildDir")
+        // tag step
+        dockerImage.push(appVersion)
+        dockerImage.push(latestVersion)
     }
+
 }
 
 def shGradle(taskName, options) {
