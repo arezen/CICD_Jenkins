@@ -83,8 +83,12 @@ def publishMaven(options) {
 
 def publishDocker(options) {
 
-    if (options.contains('--web')) {
-        println "------******------******----"
+    println "------******------******----"
+
+    println options
+
+    if (options == '--web') {
+        println "got --web flag"
     }
 
     return
