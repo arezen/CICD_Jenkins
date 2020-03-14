@@ -14,6 +14,7 @@ def call(body) {
             stage('Initialize') {
                 steps {
                     echoEnvironment()
+                    updateAppVersion()
                     updateWebAppVersion()
                 }
             }
