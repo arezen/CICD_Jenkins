@@ -90,8 +90,8 @@ def publishDocker(options) {
 
     println options
 
-    if (options == '--web') {
-        println "got --web flag"
+    if (options == '--angular') {
+        println "got --angular flag"
     }
 
     return
