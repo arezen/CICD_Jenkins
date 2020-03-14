@@ -7,9 +7,6 @@ def call(String taskName, ...params) {
 
     options << 'no-daemon'
 
-    println "########################################"
-    println "options $options"
-
     "$taskName"(options)
 }
 
@@ -109,7 +106,8 @@ def publishDocker(options) {
 }
 
 def shGradle(taskName, options) {
-    sh "./gradlew $taskName ${optionsString(options)}"
+//    sh "./gradlew $taskName ${optionsString(options)}"
+    sh "gradle $taskName ${optionsString(options)}"
 }
 
 def optionsString(options) {
