@@ -13,10 +13,10 @@ def call(body) {
         stages {
             stage('Initialize') {
                 steps {
-                    gradleExec('clean', '--refresh-dependencies')
                     echoEnvironment()
                     updateAppVersion()
                     updateWebAppVersion()
+                    gradle 'refreshDependencies'
                 }
             }
             stage('Build') {
