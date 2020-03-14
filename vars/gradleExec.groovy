@@ -7,6 +7,9 @@ def call(String taskName, ...params) {
 
     options << 'no-daemon'
 
+    println "########################################"
+    println "options $options"
+
     "$taskName"(options)
 }
 
