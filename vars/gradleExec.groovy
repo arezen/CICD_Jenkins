@@ -5,7 +5,7 @@ def call(String taskName, ...params) {
     def options = []
     options.addAll(params)
 
-    options << 'no-daemon'
+    //options << 'no-daemon'
 
     "$taskName"(options)
 }
