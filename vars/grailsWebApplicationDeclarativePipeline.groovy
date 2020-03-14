@@ -11,31 +11,32 @@ def call(body) {
     pipeline {
         agent any
         stages {
-            stage('Initialize') {
-                steps {
-                    echoEnvironment()
-                    updateWebAppVersion()
-                }
-            }
-            stage('Build') {
-                steps {
-                    gradleExec 'buildAngular'
-                }
-            }
-            stage('Lint') {
-                when { expression { params.lint }}
-                steps {
-                    gradleExec 'lint'
-                }
-            }
-            stage('Test') {
-                steps {
-                    gradleExec 'testAngular'
-                }
-            }
+//            stage('Initialize') {
+//                steps {
+//                    echoEnvironment()
+//                    updateWebAppVersion()
+//                }
+//            }
+//            stage('Build') {
+//                steps {
+//                    gradleExec 'buildAngular'
+//                }
+//            }
+//            stage('Lint') {
+//                when { expression { params.lint }}
+//                steps {
+//                    gradleExec 'lint'
+//                }
+//            }
+//            stage('Test') {
+//                steps {
+//                    gradleExec 'testAngular'
+//                }
+//            }
             stage('Publish') {
                 steps {
                     sh 'echo About to publish'
+                    gradleExec 'publishDocker' '--web'
 /*
                     sh './gradlew prepareBuild'
                     script {

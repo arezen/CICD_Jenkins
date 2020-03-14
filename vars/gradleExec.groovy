@@ -83,6 +83,12 @@ def publishMaven(options) {
 
 def publishDocker(options) {
 
+    if (options.contains('--web')) {
+        println "------******------******----"
+    }
+
+    return
+
     def tagWithoutBuildNumber = gradleProperties('baseVersion')
     def tagWithBuildNumber = gradleProperties('bricVersion')
     def projectName = gradleSettings('rootProject.name').replace("'", "").trim().toLowerCase()
