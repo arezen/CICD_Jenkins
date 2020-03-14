@@ -16,7 +16,7 @@ def call(body) {
                     echoEnvironment()
                     updateAppVersion()
                     updateWebAppVersion()
-                    gradleExec 'refreshDependencies'
+                    //gradleExec 'refreshDependencies'
                 }
             }
             stage('Build') {
