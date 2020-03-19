@@ -13,41 +13,28 @@ def call(body) {
                 steps {
                     echoEnvironment()
                     updateAppVersion()
-                    sh './gradlew clean --refresh-dependencies'
+                    // clean step
                 }
             }
             stage('Build') {
                 steps {
-                    sh './gradlew clean build -x test'
+                    gradleExec 'build', 'exclude-task integrationTest'
                 }
             }
             stage('Test') {
                 steps {
-                    sh './gradlew test -x cobertura'
+                    gradleExec 'build', 'exclude-task  cobertura'
                 }
             }
             stage('Code Coverage') {
                 steps {
-                    sh './gradlew cobertura'
-                    cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/build/reports/cobertura/coverage.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
+                    gradleExec 'codeCoverage'
                 }
             }
             stage('Publish') {
                 steps {
-                    sh './gradlew prepareBuild'
                     script {
-
-                        def dockerRepo = 'http://' + gradleProperties('dockerRepo')
-                        def appVersion = gradleProperties('appVersion')
-                        def latestVersion = gradleProperties('baseVersion') + '.latest'
-                        def projectName = gradleSettings('rootProject.name').replace("'", "").trim().toLowerCase()
-
-                        docker.withRegistry(dockerRepo, 'repoPusher-credentials') {
-                            def dockerImage = docker.build("$projectName", "./build/docker")
-                            // tag step
-                            dockerImage.push(appVersion)
-                            dockerImage.push(latestVersion)
-                        }
+                        gradleExec  'publishDocker'
                     }
                 }
             }

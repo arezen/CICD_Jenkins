@@ -7,6 +7,9 @@ def call() {
     def properties = new Properties()
     properties.load(propertiesFile.newDataInputStream())
 
+    properties.argodenUser = "repoPusher"
+    properties.argodenPassword = "vicWrdDpIw5+YSBfBfNkQQ=="
+
     switch (gitUtils('BranchName')) {
 
         case 'master':
@@ -15,8 +18,6 @@ def call() {
             properties.appDependencyVersion = "${properties.baseVersion}.+".toString()
             properties.dockerRepo = "nexus.argoden.com:5001".toString()
             properties.mavenRepo = "nexus.argoden.com:8080".toString()
-            properties.argodenUser = "repoPusher"
-            properties.argodenPassword = "vicWrdDpIw5+YSBfBfNkQQ=="
             break
 
         case 'dev':
@@ -25,8 +26,6 @@ def call() {
             properties.appDependencyVersion = "${properties.baseVersion}.+".toString()
             properties.dockerRepo = "nexus.argoden.com:5002".toString()
             properties.mavenRepo = "nexus.argoden.com:8080".toString()
-            properties.argodenUser = "repoPusher"
-            properties.argodenPassword = "vicWrdDpIw5+YSBfBfNkQQ=="
             break
 
         default:
@@ -35,9 +34,7 @@ def call() {
                 properties.appVersion = "${properties.baseVersion}.${env.BUILD_NUMBER}".toString()
                 properties.appDependencyVersion = "${properties.baseVersion}.+".toString()
                 properties.dockerRepo = "nexus.argoden.com:5002".toString()
-                properties.mavenRepo = "nexus.argoden.com:8080".toString()
-                properties.argodenUser = "repoPusher"
-                properties.argodenPassword = "vicWrdDpIw5+YSBfBfNkQQ=="
+                properties.mavenRepo = "nexus.argoden.com:8080".toString() 
             }
             break
     }
