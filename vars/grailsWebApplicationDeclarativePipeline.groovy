@@ -37,7 +37,7 @@ def call(body) {
             }
             stage('Publish') {
                 steps {
-                    gradleExec 'publishDocker' '--web'
+                    gradleExec('publishDocker', '--web')
                 }
             }
         }
