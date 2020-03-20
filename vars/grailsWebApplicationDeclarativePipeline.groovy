@@ -15,7 +15,7 @@ def call(body) {
                 steps {
                     echoEnvironment()
                     updateAppVersion()
-                    updateWebAppVersion()
+                   // updateWebAppVersion()
                     //gradleExec 'refreshDependencies'
                 }
             }
