@@ -16,16 +16,16 @@ def call() {
             properties.baseVersion = "master".toString()
             properties.appVersion = "${properties.baseVersion}.${env.BUILD_NUMBER}".toString()
             properties.appDependencyVersion = "${properties.baseVersion}.+".toString()
-            properties.dockerRepo = "nexus.argoden.com:5001".toString()
-            properties.mavenRepo = "nexus.argoden.com:8080".toString()
+            properties.dockerRepo = "localhost:5001".toString()
+            properties.mavenRepo = "localhost:8080".toString()
             break
 
         case 'dev':
             properties.baseVersion = "dev".toString()
             properties.appVersion = "${properties.baseVersion}.${env.BUILD_NUMBER}".toString()
             properties.appDependencyVersion = "${properties.baseVersion}.+".toString()
-            properties.dockerRepo = "nexus.argoden.com:5002".toString()
-            properties.mavenRepo = "nexus.argoden.com:8080".toString()
+            properties.dockerRepo = "localhost:5002".toString()
+            properties.mavenRepo = "localhost:8080".toString()
             break
 
         default:
@@ -33,8 +33,8 @@ def call() {
                 properties.baseVersion = "pr.${env.CHANGE_ID}".toString()
                 properties.appVersion = "${properties.baseVersion}.${env.BUILD_NUMBER}".toString()
                 properties.appDependencyVersion = "${properties.baseVersion}.+".toString()
-                properties.dockerRepo = "nexus.argoden.com:5002".toString()
-                properties.mavenRepo = "nexus.argoden.com:8080".toString() 
+                properties.dockerRepo = "localhost:5002".toString()
+                properties.mavenRepo = "localhost:8080".toString()
             }
             break
     }
