@@ -97,12 +97,12 @@ def publishDocker(options) {
     shGradle('prepareBuild', ['no-daemon'])
 
     docker.withRegistry('http://nexus.argoden.com:5000', 'repoPusher-credentials') {
-    docker.withRegistry(dockerRepo, 'repoPusher-credentials') {
+   // docker.withRegistry(dockerRepo, 'repoPusher-credentials') {
         def dockerImage = docker.build("$projectName", "$buildDir")
         // tag step
         dockerImage.push(appVersion)
         dockerImage.push(latestVersion)
-    }
+    //}
     }
 
 }
