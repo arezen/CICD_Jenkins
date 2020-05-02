@@ -96,21 +96,20 @@ def publishDocker(options) {
 
     shGradle('prepareBuild', ['no-daemon'])
 
+    docker.withRegistry('nexus.argoden.com:5000', 'repoPusher-credentials') {
     docker.withRegistry(dockerRepo, 'repoPusher-credentials') {
         def dockerImage = docker.build("$projectName", "$buildDir")
         // tag step
         dockerImage.push(appVersion)
         dockerImage.push(latestVersion)
     }
+    }
 
 }
 
 def shGradle(taskName, options) {
 //    sh "./gradlew $taskName ${optionsString(options)}"
-
-    withCredentials([usernamePassword(credentialsId: 'repoPusher-credentials', usernameVariable: 'argodenUser', passwordVariable: 'argodenPassword')]) {
         sh "gradle $taskName ${optionsString(options)}"
-    }
 }
 
 def optionsString(options) {
