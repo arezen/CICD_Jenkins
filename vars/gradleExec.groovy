@@ -107,7 +107,10 @@ def publishDocker(options) {
 
 def shGradle(taskName, options) {
 //    sh "./gradlew $taskName ${optionsString(options)}"
-    sh "gradle $taskName ${optionsString(options)}"
+
+    withCredentials([usernamePassword(credentialsId: 'jenkins-nexus-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASSWORD')]) {
+        sh "gradle $taskName ${optionsString(options)}"
+    }
 }
 
 def optionsString(options) {
